@@ -10,17 +10,32 @@
 		var ListElement = React.createClass({
 			getInitialState: function() {
 				return {
-					isEdited: this.props.isEdited === true
+					isEdited: this.props.isEdited === true,
+					name: this.props.name
 				};
 			},
+			/*handleChange: function(event) {
+				this.setState({name: event.target.value});
+			},*/
 			handleEdit: function(event) {
 				this.setState({isEdited: true});
-				console.log("click registered");
+				console.log("start editing");
+			},
+			handleSave: function(event) {
+				this.setState({name: this.refs.name.getDOMNode().value.trim()});
+				this.setState({isEdited: false});
+			},
+			handleCancel: function(event) {
+				this.setState({isEdited: false});
 			},
 			render: function() {
 				var textData = this.state.isEdited
-					? <span><input type="text" value={this.props.name} /></span>
-					: <span onClick={this.handleEdit}> {this.props.name} </span>
+					? <span>
+						<input type="text" defaultValue={this.state.name} ref="name" />
+						<input type="button" value="Save" onClick={this.handleSave} />
+						<input type="button" value="Cancel" onClick={this.handleCancel} />
+					  </span>
+					: <span onClick={this.handleEdit}> {this.state.name} </span>
 					
 				return(
 					<li className="listElement">
