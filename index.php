@@ -3,6 +3,7 @@
   <head>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
@@ -10,7 +11,7 @@
 		var ListElement = React.createClass({
 			getInitialState: function() {
 				return {
-					isEdited: this.props.isEdited === true,
+					isEdited: false,
 					name: this.props.name
 				};
 			},
@@ -22,11 +23,17 @@
 				console.log("start editing");
 			},
 			handleSave: function(event) {
+				// ajax to handle save
 				this.setState({name: this.refs.name.getDOMNode().value.trim()});
 				this.setState({isEdited: false});
 			},
 			handleCancel: function(event) {
 				this.setState({isEdited: false});
+			},
+			handleDelete: function(event) {
+				// ajax to handle delete
+				React.unmountComponentAtNode(this.refs.li.getDOMNode());
+				$(this.refs.li.getDOMNode()).remove();
 			},
 			render: function() {
 				var textData = this.state.isEdited
@@ -36,10 +43,33 @@
 						<input type="button" value="Cancel" onClick={this.handleCancel} />
 					  </span>
 					: <span onClick={this.handleEdit}> {this.state.name} </span>
-					
+				var liStyle = {
+					width: '400px',
+					padding: '2px',
+					margin: '2px',
+					'background-color': '#eeeeee',
+					height: '20px'
+				};
+				var textStyle = {
+					width: '300px',
+					display: 'inline',
+					float: 'left'
+				};
+				var deleteStyle = {
+					width: '100px',
+					cursor: 'pointer',
+					'text-align': 'center',
+					display: 'inline',
+					float: 'left'
+				};
 				return(
-					<li className="listElement">
-						{textData}
+					<li style={liStyle} className="listElement" ref="li">
+						<div style={textStyle}>
+							{textData}
+						</div>
+						<div style={deleteStyle} onClick={this.handleDelete}>
+							[x]
+						</div>
 					</li>
 				);
 			}
@@ -48,9 +78,9 @@
 			getInitialState: function() {
 				return {
 					data: [
-						{name: "A", isEdited: false},
-						{name: "B", isEdited: false},
-						{name: "C", isEdited: false}
+						{name: "A"},
+						{name: "B"},
+						{name: "C"}
 					]
 				}
 			},
@@ -60,8 +90,11 @@
 						<ListElement {...item} />
 					);
 				});
+				var ulStyle = {
+					'list-style-type': 'none'
+				};
 				return(
-					<ul>
+					<ul style={ulStyle}>
 						{itemData}
 					</ul>
 				);
