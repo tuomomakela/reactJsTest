@@ -1,0 +1,25 @@
+ul.list {
+	list-style-type: none;
+}
+ul.list li {
+	width: 400px;
+	padding: 2px;
+	margin: 2px;
+	background-color: #eeeeee;
+	height: 20px;
+}
+ul.list li div {
+	display: inline;
+	float: left;
+}
+ul.list li div.textElem {
+	width: 300px;
+}
+ul.list li div.deleteElem {
+	width: 100px;
+	cursor: pointer;
+	text-align: center;
+}
+ul.list li div.saveBtnElem {
+	width: 100px;
+}

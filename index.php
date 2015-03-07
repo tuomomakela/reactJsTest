@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
     <div id="content"></div>
@@ -15,9 +16,6 @@
 					name: this.props.name
 				};
 			},
-			/*handleChange: function(event) {
-				this.setState({name: event.target.value});
-			},*/
 			handleEdit: function(event) {
 				this.setState({isEdited: true});
 				console.log("start editing");
@@ -43,33 +41,38 @@
 						<input type="button" value="Cancel" onClick={this.handleCancel} />
 					  </span>
 					: <span onClick={this.handleEdit}> {this.state.name} </span>
-				var liStyle = {
-					width: '400px',
-					padding: '2px',
-					margin: '2px',
-					'background-color': '#eeeeee',
-					height: '20px'
-				};
-				var textStyle = {
-					width: '300px',
-					display: 'inline',
-					float: 'left'
-				};
-				var deleteStyle = {
-					width: '100px',
-					cursor: 'pointer',
-					'text-align': 'center',
-					display: 'inline',
-					float: 'left'
-				};
 				return(
-					<li style={liStyle} className="listElement" ref="li">
-						<div style={textStyle}>
+					<li className="listElement" ref="li">
+						<div className="textElem">
 							{textData}
 						</div>
-						<div style={deleteStyle} onClick={this.handleDelete}>
+						<div className="deleteElem" onClick={this.handleDelete}>
 							[x]
 						</div>
+					</li>
+				);
+			}
+		});
+		var CreateElement = React.createClass({
+			handleSubmit: function(event) {
+				event.preventDefault();
+				var name = this.refs.name.getDOMNode().value.trim();
+				if (!name) return;
+				// ajax to handle save
+				this.props.onNewItemSubmit({name: name});
+				this.refs.name.getDOMNode().value = '';
+			},
+			render: function() {
+				return (
+					<li className="listElement">
+						<form className="createNewForm" onSubmit={this.handleSubmit}>
+							<div className="textElem">
+								<input type="text" placeholder="New item" ref="name" />
+							</div>
+							<div className="saveBtnElem">
+								<input type="submit" value="Save" />
+							</div>
+						</form>
 					</li>
 				);
 			}
@@ -84,18 +87,24 @@
 					]
 				}
 			},
+			handleNewItemSubmit: function(name) {
+				this.state.data = React.addons.update(this.state.data, {$push: [{name: name}]});
+				console.log(this.state.data[this.state.data.length-1].name);
+				// problem is that this.state.data is not correct
+				// this could be avoided by getting entire data here from database
+				// in database data should be correct all the time
+				this.forceUpdate();
+			},
 			render: function() {
 				var itemData = this.state.data.map(function(item) {
 					return (
 						<ListElement {...item} />
 					);
 				});
-				var ulStyle = {
-					'list-style-type': 'none'
-				};
 				return(
-					<ul style={ulStyle}>
+					<ul className="list">
 						{itemData}
+						<CreateElement onNewItemSubmit={this.handleNewItemSubmit} />
 					</ul>
 				);
 			}
