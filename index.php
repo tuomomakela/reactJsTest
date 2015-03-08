@@ -78,30 +78,33 @@
 				this.refs.newName.getDOMNode().value = '';
 			},
 			render: function() {
+				var items = this.state.data.map(function(item, i) {
+					return (
+						<li className="listElement" ref={"li_"+i}>
+							{
+								item.isEdited
+									? <div className="textElem">
+										<span>
+											<input type="text" defaultValue={item.name} ref={"name_"+i} />
+											<input type="button" value="Save" onClick={this.handleSave.bind(this,i)} />
+											<input type="button" value="Cancel" onClick={this.handleCancel.bind(this,i)} />
+										</span>
+									  </div>
+									: <div className="textElem" onClick={this.handleEdit.bind(this,i)}>
+										<span>
+											{item.name}
+										</span>
+									  </div>
+							}
+							<div className="deleteElem" onClick={this.handleDelete.bind(this,i)}>
+								[x]
+							</div>
+						</li>
+					)
+				}.bind(this));
 				return(
 					<ul className="list">
-					{ 
-						this.state.data.map(function(item, i) {
-							return (
-								<li className="listElement" ref={"li_"+i}>
-									<div className="textElem">
-										{
-											item.isEdited
-												? <span>
-													<input type="text" defaultValue={item.name} ref={"name_"+i} />
-													<input type="button" value="Save" onClick={this.handleSave.bind(this,i)} />
-													<input type="button" value="Cancel" onClick={this.handleCancel.bind(this,i)} />
-												  </span>
-												: <span key={i} onClick={this.handleEdit.bind(this,i)}> {item.name} </span>
-										}
-									</div>
-									<div className="deleteElem" onClick={this.handleDelete.bind(this,i)}>
-										[x]
-									</div>
-								</li>
-							);
-						}, this)
-					}
+						{ items }
 						<li className="listElement">
 							<form className="createNewForm" onSubmit={this.handleSubmit}>
 								<div className="textElem">
