@@ -1,12 +1,23 @@
+.listContainer {
+	background-color: #fbfbfb;
+	padding: 10px 10px 5px 10px;
+	display: inline-block;
+	border: 1px dashed #999999;
+}
+
 ul.list {
 	list-style-type: none;
+	padding: 0px;
 }
 ul.list li {
 	width: 400px;
-	padding: 2px;
+	padding: 3px 10px;
 	margin: 2px;
 	background-color: #eeeeee;
 	height: 20px;
+}
+ul.list li.listNewItem {
+	background-color: transparent;
 }
 ul.list li div {
 	display: inline;
@@ -22,4 +33,5 @@ ul.list li div.deleteElem {
 }
 ul.list li div.saveBtnElem {
 	width: 100px;
+	text-align: center;
 }

@@ -4,11 +4,16 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+	<script src="smartSortable.js"></script>
+	<!--link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" /-->
+	<link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="content"></div>
     <script type="text/jsx">
+		 
+		
 		var List = React.createClass({
 			getInitialState: function() {
 				var data = [
@@ -77,10 +82,16 @@
 				this.setState(data);
 				this.refs.newName.getDOMNode().value = '';
 			},
+			handleSort: function(newOrder) {
+				var newItems = newOrder.map(function(index) {
+					return this.state.data[index];
+				}.bind(this));
+				this.setState({data: newItems});
+			},
 			render: function() {
 				var items = this.state.data.map(function(item, i) {
 					return (
-						<li className="listElement" ref={"li_"+i}>
+						<div key={i} className="listElement" ref={"li_"+i}>
 							{
 								item.isEdited
 									? <div className="textElem">
@@ -99,28 +110,49 @@
 							<div className="deleteElem" onClick={this.handleDelete.bind(this,i)}>
 								[x]
 							</div>
-						</li>
+						</div>
 					)
 				}.bind(this));
 				return(
-					<ul className="list">
-						{ items }
-						<li className="listElement">
-							<form className="createNewForm" onSubmit={this.handleSubmit}>
-								<div className="textElem">
-									<input type="text" placeholder="New item" ref="newName" />
-								</div>
-								<div className="saveBtnElem">
-									<input type="submit" value="Save" />
-								</div>
-							</form>
-						</li>
-					</ul>
+					<div className="listContainer">
+						<SmartSortable onSort={this.handleSort} className="list">
+							{ items }
+						</SmartSortable>
+						<ul className="list">
+							<li className="listElement listNewItem">
+								<form className="createNewForm" onSubmit={this.handleSubmit}>
+									<div className="textElem">
+										<input type="text" placeholder="New item" ref="newName" />
+									</div>
+									<div className="saveBtnElem">
+										<input type="submit" value="Save" />
+									</div>
+								</form>
+							</li>
+						</ul>
+					</div>
+				);
+			}
+		});
+		var App = React.createClass({
+			render: function() {
+				return (
+					<div>
+						<h1>React test</h1>
+						<p>List with create, read, update, delete and sort actions</p>
+						<List />
+						<p><b>Todo:</b>
+							<ol>
+								<li>Ajax calls</li>
+								<li>Testing Flux architecture</li>
+							</ol>
+						</p>
+					</div>
 				);
 			}
 		});
 		React.render(
-			<List />,
+			<App />,
 			document.getElementById('content')
 		);
     </script>
